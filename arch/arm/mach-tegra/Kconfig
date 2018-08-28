@@ -313,6 +313,15 @@ config MACH_KAI
        help
          Support for NVIDIA KAI development platform
 
+config MACH_WEXLER
+       bool "Wexter Tab 7t board"
+       depends on ARCH_TEGRA_3x_SOC
+       depends on !MACH_KAI
+       select MACH_HAS_SND_SOC_TEGRA_TLV320AIC325X if SND_SOC
+       help
+         Support for Wexter Tab 7t (code name QC750) based on Kai
+         development board
+
 config MACH_DALMORE
        bool "Dalmore board"
        depends on ARCH_TEGRA_11x_SOC

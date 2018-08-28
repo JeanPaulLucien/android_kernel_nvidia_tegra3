@@ -404,3 +404,12 @@ obj-${CONFIG_ARCH_ASUS_T30}             += board-asus-t30-memory.o
 obj-${CONFIG_ARCH_ASUS_T30}             += board-asus-t30-powermon.o
 obj-${CONFIG_ARCH_ASUS_T30}             += board-asus-t30-misc.o
 obj-${CONFIG_ARCH_ASUS_T30}             += board-asus-t30-vibrator.o
+
+obj-${CONFIG_MACH_WEXLER}               += board-wexler.o
+obj-${CONFIG_MACH_WEXLER}               += board-wexler-kbc.o
+obj-${CONFIG_MACH_WEXLER}               += board-wexler-memory.o
+obj-${CONFIG_MACH_WEXLER}               += board-wexler-panel.o
+obj-${CONFIG_MACH_WEXLER}               += board-wexler-pinmux.o
+obj-${CONFIG_MACH_WEXLER}               += board-wexler-power.o
+obj-${CONFIG_MACH_WEXLER}               += board-wexler-sdhci.o
+obj-${CONFIG_MACH_WEXLER}               += board-wexler-sensors.o
