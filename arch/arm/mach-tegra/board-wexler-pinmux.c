@@ -427,7 +427,7 @@ static __initdata struct tegra_pingroup_config kai_pinmux_common[] = {
 	DEFAULT_PINMUX(GMI_CS4_N,       RSVD1,         NORMAL,    NORMAL,   INPUT),
 };
 
-/*Do not use for now*/
+/* Do not use for now */
 static __initdata struct tegra_pingroup_config unused_pins_lowpower[] = {
 	DEFAULT_PINMUX(ULPI_CLK,        ULPI,          NORMAL,    TRISTATE,   OUTPUT),
 	DEFAULT_PINMUX(ULPI_DATA0,      ULPI,          NORMAL,    TRISTATE,   OUTPUT),
@@ -473,10 +473,6 @@ static __initdata struct tegra_pingroup_config unused_pins_lowpower[] = {
 
 };
 
-static void __init kai_pinmux_audio_init(void)
-{
-}
-
 /* We are disabling this code for now. */
 #define GPIO_INIT_PIN_MODE(_gpio, _is_input, _value)	\
 	{					\
@@ -508,9 +504,6 @@ static void __init kai_gpio_init_configure(void)
 
 int __init kai_pinmux_init(void)
 {
-	struct board_info board_info;
-	tegra_get_board_info(&board_info);
-	BUG_ON(board_info.board_id != BOARD_E1565);
 	kai_gpio_init_configure();
 
 	tegra_pinmux_config_table(kai_pinmux_common, ARRAY_SIZE(kai_pinmux_common));
@@ -519,7 +512,6 @@ int __init kai_pinmux_init(void)
 
 	tegra_pinmux_config_table(unused_pins_lowpower,
 		ARRAY_SIZE(unused_pins_lowpower));
-	kai_pinmux_audio_init();
 
 	return 0;
 }
@@ -534,9 +526,7 @@ int __init kai_pinmux_init(void)
 	}
 
 struct gpio_init_pin_info pin_lpm_kai_common[] = {
-	//PIN_GPIO_LPM("GMI_CS4_N", TEGRA_GPIO_PK2, 1, 0),
 	PIN_GPIO_LPM("GMI_CS7",   TEGRA_GPIO_PI6, 1, 0),
-	//PIN_GPIO_LPM("GMI_CS0",   TEGRA_GPIO_PJ0, 1, 0),
 	PIN_GPIO_LPM("GMI_CS1",   TEGRA_GPIO_PJ2, 1, 0),
 };
 

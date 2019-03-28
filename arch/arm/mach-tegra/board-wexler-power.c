@@ -356,7 +356,6 @@ static struct regulator_consumer_supply fixed_reg_en_cam1_ldo_supply[] = {
 	REGULATOR_SUPPLY("vdd_cam1", NULL),
 };
 
-
 static struct regulator_consumer_supply fixed_reg_en_3v3_sys_a01_supply[] = {
 	REGULATOR_SUPPLY("vdd_3v3", NULL),
 	REGULATOR_SUPPLY("vdd_3v3_devices", NULL),
@@ -430,16 +429,14 @@ FIXED_REG(9,  en_vdd_sdmmc1_a01, en_vdd_sdmmc1,		FIXED_SUPPLY(en_3v3_sys_a01),
 	0,	0,	TEGRA_GPIO_PC6,				true,	0,	3300);
 FIXED_REG(10, en_3v3_fuse_a01,	en_3v3_fuse,		FIXED_SUPPLY(en_3v3_sys_a01),
 	0,	0,	TEGRA_GPIO_PC1,				true,	0,	3300);
-
 FIXED_REG(11, en_1v8_cam_a01,	en_1v8_cam,		NULL,
 	0,	0,	TEGRA_GPIO_PS0,				true,	0,	1800);
-
 FIXED_REG(12, en_cam1_ldo_a01,	en_cam1_ldo,		FIXED_SUPPLY(en_3v3_sys_a01),	
 	0,	0,	TEGRA_GPIO_PR6,				true,	0,	2800);
+
 /*
  * Creating the fixed regulator device tables
  */
-
 #define ADD_FIXED_REG(_name)	(&fixed_reg_##_name##_dev)
 
 /* A01 specific */
@@ -460,12 +457,8 @@ static struct platform_device *fixed_reg_devs_a01[] = {
 static int __init kai_fixed_regulator_init(void)
 {
 	int i;
-	struct board_info board_info;
 	struct platform_device **fixed_reg_devs;
 	int nfixreg_devs;
-
-	tegra_get_board_info(&board_info);
-
 
 	fixed_reg_devs = fixed_reg_devs_a01;
 	nfixreg_devs = ARRAY_SIZE(fixed_reg_devs_a01);
@@ -479,7 +472,7 @@ static int __init kai_fixed_regulator_init(void)
 
 	}
 
-	printk("kai_fixed_regulator_init nfixreg_devs=%d\n",nfixreg_devs);
+	printk("kai_fixed_regulator_init nfixreg_devs = %d\n", nfixreg_devs);
 
 	return platform_add_devices(fixed_reg_devs, nfixreg_devs);
 }
@@ -552,7 +545,6 @@ void __init kai_tsensor_init(void)
 }
 
 #ifdef CONFIG_TEGRA_EDP_LIMITS
-
 int __init kai_edp_init(void)
 {
 	unsigned int regulator_mA;
@@ -560,7 +552,7 @@ int __init kai_edp_init(void)
 	regulator_mA = get_maximum_cpu_current_supported();
 	if (!regulator_mA)
 		regulator_mA = 6000; /* regular T30/s */
-	pr_info("%s: CPU regulator %d mA\n", __func__, regulator_mA);
+	pr_info("QC750: CPU regulator %d mA\n", regulator_mA);
 
 	tegra_init_cpu_edp_limits(regulator_mA);
 	return 0;
@@ -576,6 +568,4 @@ int __init nabi2_hold_avdd_usb(void){
 	
 	return 0;
 }
-
 late_initcall(nabi2_hold_avdd_usb);
-

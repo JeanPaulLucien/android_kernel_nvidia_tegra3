@@ -43,6 +43,7 @@
 #include "clock.h"
 #include <linux/clk.h>
 #include "fuse.h"
+
 /* kai default display board pins */
 #define kai_lvds_avdd_en		TEGRA_GPIO_PH2
 #define kai_lvds_shutdown	TEGRA_GPIO_PN6
@@ -107,12 +108,12 @@ static tegra_dc_bl_output kai_bl_output_measured = {
 	219, 219, 220, 222, 226, 230, 232, 234,
 	236, 238, 240, 244, 248, 251, 253, 255
 };
-static struct clk * usbd_emc=NULL;
+static struct clk * usbd_emc = NULL;
 static p_tegra_dc_bl_output bl_output;
 
 static int kai_backlight_init(struct device *dev)
 {
-	int ret=0;
+	int ret = 0;
 
 	bl_output = kai_bl_output_measured;
 
@@ -160,7 +161,7 @@ if(!machine_is_nabi2_xd() && !machine_is_n1010() && !machine_is_ns_14t004() && !
 #define NABI2_MAX_BRIGHTNESS 235
 static int kai_backlight_notify(struct device *unused, int brightness)
 {
-	int closeBl =0;
+	int closeBl = 0;
 	int cur_sd_brightness = atomic_read(&sd_brightness);
 
 	/* SD brightness is a percentage, 8-bit value. */
@@ -303,25 +304,12 @@ static struct platform_device kai_backlight_device = {
 static int kai_panel_postpoweron(void)
 {
 	printk("kai_panel_postpoweron\n");
-	
-if(machine_is_nabi2() || machine_is_nabi2_3d() || machine_is_nabi_2s() ||machine_is_qc750() 
-	||  machine_is_n710() || machine_is_itq700() || machine_is_itq701()|| machine_is_mm3201() || machine_is_n750()|| machine_is_wikipad()){
+
 	gpio_set_value(kai_lvds_avdd_en, 1);
 	mdelay(5);
-
 	gpio_set_value(kai_lvds_shutdown, 1);
 	gpio_set_value(kai_lvds_vdd, 1);
-}
-else if(machine_is_birch())
-{
 
-
-	gpio_set_value(kai_lvds_vdd, 1);
-	mdelay(20);
-	gpio_set_value(kai_lvds_shutdown, 1);
-	mdelay(220);
-	gpio_set_value(kai_lvds_avdd_en, 1);	
-}
 #ifdef CONFIG_KEENHI_NV_DC_SSD2828_AUO
 if(!machine_is_nabi2_xd() && !machine_is_n1010() && !machine_is_ns_14t004() && !machine_is_itq1000() && 
 	!machine_is_n1011() && !machine_is_n1050()){
@@ -344,14 +332,13 @@ static int kai_panel_enable(void)
 		tegra_release_bootloader_fb();
 		atomic_set(&keenhi_release_bootloader_fb_flag, 1);
 	}
-	if(usbd_emc==NULL){
-		usbd_emc =clk_get_sys("tegra-udc.0", "emc");
+	if(usbd_emc == NULL){
+		usbd_emc = clk_get_sys("tegra-udc.0", "emc");
 	}
 	if(usbd_emc){
 		printk("hold the usbd.emc for usb\n");
 		clk_enable(usbd_emc);
 	}
-	
 	
 #ifdef CONFIG_KEENHI_NV_DC_DSI_OUT
 	if (nabi2_dsi_reg == NULL && (machine_is_nabi2_xd() || machine_is_n1010()||machine_is_ns_14t004()||machine_is_itq1000()||
@@ -379,7 +366,7 @@ static int kai_panel_enable(void)
 
 static int kai_panel_disable(void)
 {
-	if(usbd_emc==NULL){
+	if(usbd_emc == NULL){
 		usbd_emc =clk_get_sys("tegra-udc.0", "emc");
 	}
 	if(usbd_emc){
@@ -407,32 +394,17 @@ if(nabi2_dsi_reg&&(machine_is_nabi2_xd() || machine_is_n1010()||machine_is_ns_14
 
 static int kai_panel_prepoweroff(void)
 {
-
-	//printk("kai_panel_prepoweroff\n");
-
 	gpio_request(kai_bl_pwm, "disable_pwm");
 	gpio_direction_output(kai_bl_pwm, 1);
 	gpio_free(kai_bl_pwm);
 
-if(machine_is_nabi2() || machine_is_nabi2_3d() || machine_is_nabi_2s()||machine_is_qc750() 
-	||  machine_is_n710() || machine_is_itq700() || machine_is_itq701() || machine_is_mm3201()|| machine_is_n750()|| machine_is_wikipad()){
 	gpio_set_value(kai_lvds_vdd, 0);
 	gpio_set_value(kai_lvds_shutdown, 0);
 	mdelay(5);
 
 	gpio_set_value(kai_lvds_avdd_en, 0);
 	mdelay(5);
-}
-else if(machine_is_birch())
-{
 
-	gpio_set_value(kai_lvds_avdd_en, 0);
-	mdelay(220);
-	gpio_set_value(kai_lvds_shutdown, 0);
-	mdelay(20);
-	gpio_set_value(kai_lvds_vdd, 0);
-	mdelay(550);
-}
 #ifdef CONFIG_KEENHI_NV_DC_SSD2828_AUO
 if(!machine_is_nabi2_xd() && !machine_is_n1010() && !machine_is_ns_14t004() && !machine_is_itq1000() && 
 	!machine_is_n1011() && !machine_is_n1050()){
@@ -443,7 +415,6 @@ if(!machine_is_birch()  ){
 #ifdef CONFIG_KEENHI_NV_DC_SSD2828_AUO
 }
 #endif
-
 
 	return 0;
 }
@@ -547,6 +518,7 @@ static struct resource kai_disp1_resources[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 };
+
 #ifdef CONFIG_KEENHI_NV_DC_DSI_OUT
 static struct resource kai_dsi_disp1_resources[] = {
 	{
@@ -575,6 +547,7 @@ static struct resource kai_dsi_disp1_resources[] = {
 	},
 };
 #endif
+
 static struct resource kai_disp2_resources[] = {
 	{
 		.name	= "irq",
@@ -619,6 +592,7 @@ static struct tegra_dc_mode kai_panel_modes[] = {
 		.v_front_porch = 15,
 	},
 };
+
 #if defined(CONFIG_BRIDGE_SSD2828) && !defined(CONFIG_KEENHI_NV_DC_SSD2828_AUO)//is CPT panel
 static struct tegra_dc_mode nabi2_xd_panel_modes[] = {
 	{
@@ -637,6 +611,7 @@ static struct tegra_dc_mode nabi2_xd_panel_modes[] = {
 	},
 };
 #endif
+
 #if defined(CONFIG_BRIDGE_SSD2828) && defined(CONFIG_KEENHI_NV_DC_SSD2828_AUO)//is AUO panel
 static struct tegra_dc_mode nabi2_xd_panel_modes[] = {
 	{
@@ -655,6 +630,7 @@ static struct tegra_dc_mode nabi2_xd_panel_modes[] = {
 	},
 };
 #endif
+
 #ifdef CONFIG_KEENHI_NV_DC_DSI_OUT
 static struct tegra_dc_mode nabi2_xd_dsi_panel_modes[] = {
 	{
@@ -673,16 +649,11 @@ static struct tegra_dc_mode nabi2_xd_dsi_panel_modes[] = {
 };
 #endif
 
-//#define __CHAGE_FREQ__
 #ifdef CONFIG_TLC59116_LED
 static struct tegra_dc_mode nabi2_3d_panel_modes[] = {
 	{
-#ifdef __CHAGE_FREQ__
 		/* 1024x600@60Hz */
-		.pclk = 66770000,//51206000,
-#else
 		.pclk = 81750000,//51206000,
-#endif
 		.h_ref_to_sync = 1,
 		.v_ref_to_sync = 1,
 		.h_sync_width = 64,
@@ -698,12 +669,8 @@ static struct tegra_dc_mode nabi2_3d_panel_modes[] = {
 #else
 static struct tegra_dc_mode nabi2_3d_panel_modes[] = {
 	{
-#ifdef __CHAGE_FREQ__
 		/* 1024x600@60Hz */
-		.pclk = 66770000,//51206000,
-#else
 		.pclk = 81750000,//51206000,
-#endif
 		.h_ref_to_sync = 1,
 		.v_ref_to_sync = 1,
 		.h_sync_width = 64,
@@ -717,6 +684,7 @@ static struct tegra_dc_mode nabi2_3d_panel_modes[] = {
 	},
 };
 #endif
+
 static struct tegra_dc_mode nabi_2s_panel_modes[] = {
 	{
 		/* 1024x600@60Hz */
@@ -834,6 +802,7 @@ static struct tegra_fb_data kai_fb_data = {
 	.bits_per_pixel	= 32,
 	.flags		= TEGRA_FB_FLIP_ON_PROBE,
 };
+
 #if (defined(CONFIG_BRIDGE_SSD2828)||defined(CONFIG_KEENHI_NV_DC_DSI_OUT))&&!defined(CONFIG_KEENHI_NV_DC_SSD2828_AUO)
 static struct tegra_fb_data nabi2_xd_fb_data = {
 	.win		= 0,
@@ -843,6 +812,7 @@ static struct tegra_fb_data nabi2_xd_fb_data = {
 	.flags		= TEGRA_FB_FLIP_ON_PROBE,
 };
 #endif
+
 #if defined(CONFIG_BRIDGE_SSD2828) && defined(CONFIG_KEENHI_NV_DC_SSD2828_AUO)//is AUO panel
 static struct tegra_fb_data nabi2_xd_fb_data = {
 	.win		= 0,
@@ -852,6 +822,7 @@ static struct tegra_fb_data nabi2_xd_fb_data = {
 	.flags		= TEGRA_FB_FLIP_ON_PROBE,
 };
 #endif
+
 #ifdef CONFIG_TLC59116_LED
 static struct tegra_fb_data nabi2_3d_fb_data = {
 	.win		= 0,
@@ -869,6 +840,7 @@ static struct tegra_fb_data nabi2_3d_fb_data = {
 	.flags		= TEGRA_FB_FLIP_ON_PROBE,
 };
 #endif
+
 static struct tegra_fb_data nabi_2s_fb_data = {
 	.win		= 0,
 	.xres		= 800,
@@ -924,6 +896,7 @@ static struct tegra_dc_platform_data nabi_2s_disp2_pdata = {
 	.emc_clk_rate	= 300000000,
 };
 #endif
+
 #ifdef CONFIG_BRIDGE_SSD2828
 static struct tegra_dc_out_pin kai_dc_out_pins[] = {
 	{
@@ -964,6 +937,7 @@ static struct tegra_dc_out kai_disp1_out = {
 	.prepoweroff	= kai_panel_prepoweroff,
 	.disable	= kai_panel_disable,
 };
+
 #ifdef CONFIG_BRIDGE_SSD2828
 static struct tegra_dc_out nabi2_xd_disp1_out = {
 	.align		= TEGRA_DC_ALIGN_MSB,
@@ -986,6 +960,7 @@ static struct tegra_dc_out nabi2_xd_disp1_out = {
 	.disable	= kai_panel_disable,
 };
 #endif
+
 #ifdef CONFIG_KEENHI_NV_DC_DSI_OUT
 static struct tegra_dsi_cmd dsi_init_cmd[]= {
 
@@ -998,6 +973,7 @@ static struct tegra_dsi_cmd dsi_init_cmd[]= {
 	DSI_CMD_SHORT(0x03, 0x00, 0x00),
 	DSI_DLY_MS(100),
 };
+
 struct tegra_dsi_out nabi2_xd_dsi = {
 	.n_data_lanes = 2,
 	.pixel_format = TEGRA_DSI_PIXEL_FORMAT_24BIT_P,
@@ -1006,12 +982,12 @@ struct tegra_dsi_out nabi2_xd_dsi = {
 
 	.virtual_channel = TEGRA_DSI_VIRTUAL_CHANNEL_0,
 	
-	.video_burst_mode= TEGRA_DSI_VIDEO_NONE_BURST_MODE_WITH_SYNC_END,
+	.video_burst_mode = TEGRA_DSI_VIDEO_NONE_BURST_MODE_WITH_SYNC_END,
 
-	.hs_cmd_mode_supported=false,
-	.no_pkt_seq_eot=false,//only burst_mode can be used
-	.enable_hs_clock_on_lp_cmd_mode=false, //if true force video clock mode entry  continuous mode 
-	.panel_send_dc_frames=false,
+	.hs_cmd_mode_supported = false,
+	.no_pkt_seq_eot = false,//only burst_mode can be used
+	.enable_hs_clock_on_lp_cmd_mode = false, //if true force video clock mode entry  continuous mode 
+	.panel_send_dc_frames = false,
 
 	.panel_has_frame_buffer = false,
 	.dsi_instance = 0,
@@ -1020,27 +996,9 @@ struct tegra_dsi_out nabi2_xd_dsi = {
 	.power_saving_suspend = true,
 	.n_init_cmd = ARRAY_SIZE(dsi_init_cmd),
 	.dsi_init_cmd = dsi_init_cmd,
-	.video_clock_mode=TEGRA_DSI_VIDEO_CLOCK_CONTINUOUS,
+	.video_clock_mode = TEGRA_DSI_VIDEO_CLOCK_CONTINUOUS,
 
 	.video_data_type = TEGRA_DSI_VIDEO_TYPE_VIDEO_MODE,
-#if 0
-	.phy_timing={ //for used to HS mode adj delay
-	16,//t_hsdexit_ns
-	10,//t_hstrail_ns
-	24,//t_datzero_ns
-	5,//t_hsprepare_ns
-	10,//t_clktrail_ns
-	22,//t_clkpost_ns
-	43,//t_clkzero_ns
-	2,//t_tlpx_ns
-	6,//t_clkprepare_ns
-	4,//t_clkpre_ns
-	4096,//t_wakeup_ns
-	5,//t_taget_ns
-	2,//t_tasure_ns
-	4//t_tago_ns
-	},
-#endif 
 };
 static struct tegra_dc_out dsi_disp1_out = {
 	.align		= TEGRA_DC_ALIGN_MSB,
@@ -1189,22 +1147,10 @@ static struct nvhost_device nabi_2s_disp1_device = {
 		.platform_data = &nabi_2s_disp1_pdata,
 	},
 };
+
 static int kai_disp1_check_fb(struct device *dev, struct fb_info *info)
 {
-	if(machine_is_nabi2_3d() ||machine_is_qc750() ||  machine_is_n710() || machine_is_itq700() || machine_is_itq701() || machine_is_mm3201() || machine_is_n750() || machine_is_birch() || machine_is_wikipad())
-		return info->device == &nabi2_3d_disp1_device.dev;
-	if(machine_is_nabi_2s())
-		return info->device == &nabi_2s_disp1_device.dev;
-#ifdef CONFIG_BRIDGE_SSD2828
-	else if(machine_is_nabi2_xd() )
-		return info->device == &nabi2_xd_disp1_device.dev;
-#elif defined(CONFIG_KEENHI_NV_DC_DSI_OUT)
-	else if(machine_is_nabi2_xd() || machine_is_n1010() || machine_is_ns_14t004() || machine_is_itq1000() || 
-		machine_is_n1011() || machine_is_n1050())
-		return info->device == &nabi2_xd_dsi_disp1_device.dev;
-#endif
-	else
-		return info->device == &kai_disp1_device.dev;
+	return info->device == &nabi2_3d_disp1_device.dev;
 }
 
 static struct nvhost_device kai_disp2_device = {
@@ -1290,22 +1236,17 @@ static void kai_panel_early_suspend(struct early_suspend *h)
 		fb_blank(registered_fb[0], FB_BLANK_POWERDOWN);
 	if (num_registered_fb > 1)
 		fb_blank(registered_fb[1], FB_BLANK_NORMAL);
-#ifdef CONFIG_TEGRA_CONVSERVATIVE_GOV_ON_EARLYSUPSEND
-	cpufreq_store_default_gov();
-	cpufreq_change_gov(cpufreq_conservative_gov);
-#endif
 }
 
 static void kai_panel_late_resume(struct early_suspend *h)
 {
 	unsigned i;
-#ifdef CONFIG_TEGRA_CONVSERVATIVE_GOV_ON_EARLYSUPSEND
-	cpufreq_restore_default_gov();
-#endif
+
 	for (i = 0; i < num_registered_fb; i++)
 		fb_blank(registered_fb[i], FB_BLANK_UNBLANK);
 }
 #endif
+
 #ifdef CONFIG_KEENHI_NV_DC_DSI_OUT
 static int __init init_all_nv_dsi_lcd_gpio(void)
 {
@@ -1328,6 +1269,7 @@ static int __init init_all_nv_dsi_lcd_gpio(void)
 	
 }
 #endif
+
 #ifdef CONFIG_BRIDGE_SSD2828
 int register_resume_callback(struct ssd2828_data * data){	
 	pr_err("%s:=================>register lcd init\n",__func__);	
@@ -1378,29 +1320,16 @@ static int __init kai_ssd_init(void)
 	return 0;
 }
 #endif
+
 int __init kai_panel_init(void)
 {
 	int err;
 	struct resource __maybe_unused *res;
-	struct board_info board_info;
-
-	tegra_get_board_info(&board_info);
 
 #if defined(CONFIG_TEGRA_NVMAP)
 	kai_carveouts[1].base = tegra_carveout_start;
 	kai_carveouts[1].size = tegra_carveout_size;
 #endif
-
-#ifdef CONFIG_KEENHI_NV_DC_DSI_OUT
-	if(machine_is_nabi2_xd() || machine_is_n1010() || machine_is_ns_14t004() || machine_is_itq1000() || 
-		machine_is_n1011() || machine_is_n1050()){
-		kai_disp2_out.parent_clk	= "pll_d2_out0";
-		init_all_nv_dsi_lcd_gpio();
-	}
-#endif
-
-if(machine_is_nabi2() || machine_is_nabi2_3d()||machine_is_nabi_2s()||machine_is_qc750() 
-	||  machine_is_n710() || machine_is_itq700() || machine_is_itq701() || machine_is_mm3201() || machine_is_n750() || machine_is_birch() || machine_is_wikipad()){
 
 	gpio_request(kai_lvds_avdd_en, "lvds_avdd_en");
 	gpio_direction_output(kai_lvds_avdd_en, 1);
@@ -1410,25 +1339,12 @@ if(machine_is_nabi2() || machine_is_nabi2_3d()||machine_is_nabi_2s()||machine_is
 
 	gpio_request(kai_lvds_shutdown, "lvds_shutdown");
 	gpio_direction_output(kai_lvds_shutdown, 1);
-}
 
-    if(machine_is_qc750() ||  machine_is_n710() || machine_is_itq700() || machine_is_itq701()|| machine_is_mm3201() || machine_is_n750() || machine_is_birch() || machine_is_wikipad())
-    {
-        kai_backlight_data.dft_brightness = 30;
-        kai_backlight_data.pwm_period_ns = 5000000;
-    }
+	kai_backlight_data.dft_brightness = 30;
+	kai_backlight_data.pwm_period_ns = 5000000;
+
 	gpio_request(kai_hdmi_hpd, "hdmi_hpd");
 	gpio_direction_input(kai_hdmi_hpd);
-
-#ifdef CONFIG_BRIDGE_SSD2828
-	if(machine_is_nabi2_xd() )kai_ssd_init();
-#endif
-#ifdef CONFIG_HAS_EARLYSUSPEND
-	kai_panel_early_suspender.suspend = kai_panel_early_suspend;
-	kai_panel_early_suspender.resume = kai_panel_late_resume;
-	kai_panel_early_suspender.level = EARLY_SUSPEND_LEVEL_DISABLE_FB;
-	register_early_suspend(&kai_panel_early_suspender);
-#endif
 
 #ifdef CONFIG_TEGRA_GRHOST
 	err = tegra3_register_host1x_devices();
@@ -1440,31 +1356,9 @@ if(machine_is_nabi2() || machine_is_nabi2_3d()||machine_is_nabi_2s()||machine_is
 				ARRAY_SIZE(kai_gfx_devices));
 
 #if defined(CONFIG_TEGRA_GRHOST) && defined(CONFIG_TEGRA_DC)
-	if(machine_is_nabi2_3d()|| machine_is_qc750() ||  machine_is_n710() || machine_is_itq700() || machine_is_itq701() || machine_is_mm3201() || machine_is_n750() || machine_is_birch() || machine_is_wikipad())
-	{
-		res = nvhost_get_resource_byname(&nabi2_3d_disp1_device,
-					 IORESOURCE_MEM, "fbmem");
-	}
-	else if(machine_is_nabi_2s())
-	{
-		res = nvhost_get_resource_byname(&nabi_2s_disp1_device,
-					 IORESOURCE_MEM, "fbmem");
-	}
-#ifdef CONFIG_BRIDGE_SSD2828
-	else if(machine_is_nabi2_xd() )
-		res = nvhost_get_resource_byname(&nabi2_xd_disp1_device,
-					 IORESOURCE_MEM, "fbmem");
-#elif defined(CONFIG_KEENHI_NV_DC_DSI_OUT)
-	else if(machine_is_nabi2_xd() || machine_is_n1010() || machine_is_ns_14t004() || machine_is_itq1000() || 
-			machine_is_n1011() || machine_is_n1050())
-		res = nvhost_get_resource_byname(&nabi2_xd_dsi_disp1_device,
-					 IORESOURCE_MEM, "fbmem");
-#endif
-	else
-	{
-		res = nvhost_get_resource_byname(&kai_disp1_device,
-					 IORESOURCE_MEM, "fbmem");
-	}
+	res = nvhost_get_resource_byname(&nabi2_3d_disp1_device,
+				IORESOURCE_MEM, "fbmem");
+
 	res->start = tegra_fb_start;
 	res->end = tegra_fb_start + tegra_fb_size - 1;
 #endif
@@ -1474,32 +1368,16 @@ if(machine_is_nabi2() || machine_is_nabi2_3d()||machine_is_nabi_2s()||machine_is
 				min(tegra_fb_size, tegra_bootloader_fb_size));
 
 #if defined(CONFIG_TEGRA_GRHOST) && defined(CONFIG_TEGRA_DC)
-	if(machine_is_nabi2_3d() ||machine_is_qc750() ||  machine_is_n710() || machine_is_itq700() || machine_is_itq701() || machine_is_mm3201() || machine_is_n750() || machine_is_birch() || machine_is_wikipad())
-	{
-		if (!err)
-		err = nvhost_device_register(&nabi2_3d_disp1_device);
+	if (!err)
+	err = nvhost_device_register(&nabi2_3d_disp1_device);
 
-		res = nvhost_get_resource_byname(&nabi2_3d_disp2_device,
-						 IORESOURCE_MEM, "fbmem");
-		res->start = tegra_fb2_start;
-		res->end = tegra_fb2_start + tegra_fb2_size - 1;
-		if (!err)
-			err = nvhost_device_register(&nabi2_3d_disp2_device);
-	}
-	else if(machine_is_nabi_2s())
-	{
-		if (!err)
-		err = nvhost_device_register(&nabi_2s_disp1_device);
+	res = nvhost_get_resource_byname(&nabi2_3d_disp2_device,
+					IORESOURCE_MEM, "fbmem");
 
-		res = nvhost_get_resource_byname(&nabi_2s_disp2_device,
-						 IORESOURCE_MEM, "fbmem");
-		res->start = tegra_fb2_start;
-		res->end = tegra_fb2_start + tegra_fb2_size - 1;
-		if (!err)
-			err = nvhost_device_register(&nabi_2s_disp2_device);
-	}
-	else
-	{
+	res->start = tegra_fb2_start;
+	res->end = tegra_fb2_start + tegra_fb2_size - 1;
+	if (!err)
+		err = nvhost_device_register(&nabi2_3d_disp2_device);
 #ifdef CONFIG_BRIDGE_SSD2828
 	if(machine_is_nabi2_xd() ){
 		if (!err)
